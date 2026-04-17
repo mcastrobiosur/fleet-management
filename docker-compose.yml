@@ -1,6 +1,6 @@
 services:
 
-  postgres:
+  postgres-biosur:
     image: postgres:16-alpine
     restart: unless-stopped
     environment:
@@ -8,40 +8,40 @@ services:
       POSTGRES_USER: ${PGUSER:-biosur}
       POSTGRES_PASSWORD: ${PGPASSWORD:?PGPASSWORD is required}
     volumes:
-      - postgres_data:/var/lib/postgresql/data
+      - postgres_data-biosur:/var/lib/postgresql/data
     healthcheck:
       test: ["CMD-SHELL", "pg_isready -U ${PGUSER:-biosur} -d ${PGDATABASE:-biosur}"]
       interval: 10s
       timeout: 5s
       retries: 5
 
-  redis:
+  redis-biosur:
     image: redis:7-alpine
     restart: unless-stopped
     command: >
       redis-server
       ${REDIS_PASSWORD:+--requirepass ${REDIS_PASSWORD}}
     volumes:
-      - redis_data:/data
+      - redis_data-biosur:/data
     healthcheck:
       test: ["CMD", "redis-cli", "ping"]
       interval: 10s
       timeout: 5s
       retries: 5
 
-  backend:
+  backend-biosur:
     build:
       context: .
       dockerfile: backend/Dockerfile
     restart: unless-stopped
     depends_on:
-      postgres:
+      postgres-biosur:
         condition: service_healthy
-      redis:
+      redis-biosur:
         condition: service_healthy
     environment:
       NODE_ENV: production
-      PORT: 3000
+      PORT: 3008
       PGHOST: postgres
       PGPORT: 5432
       PGDATABASE: ${PGDATABASE:-biosur}
@@ -56,7 +56,7 @@ services:
       AWS_SECRET_ACCESS_KEY: ${AWS_SECRET_ACCESS_KEY:-}
       AWS_REGION: ${AWS_REGION:-us-east-1}
     expose:
-      - "3000"
+      - "3008"
 
   dashboard:
     build:
@@ -64,10 +64,10 @@ services:
       dockerfile: dashboard/Dockerfile
     restart: unless-stopped
     depends_on:
-      - backend
+      - backend-biosur
     ports:
       - "${DASHBOARD_PORT:-80}:80"
 
 volumes:
-  postgres_data:
-  redis_data:
+  postgres_data-biosur:
+  redis_data-biosur:

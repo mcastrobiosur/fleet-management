@@ -42,12 +42,12 @@ services:
     environment:
       NODE_ENV: production
       PORT: 3008
-      PGHOST: postgres
+      PGHOST: postgres-biosur
       PGPORT: 5432
       PGDATABASE: ${PGDATABASE:-biosur}
       PGUSER: ${PGUSER:-biosur}
       PGPASSWORD: ${PGPASSWORD:?PGPASSWORD is required}
-      REDIS_HOST: redis
+      REDIS_HOST: redis-biosur
       REDIS_PORT: 6379
       REDIS_PASSWORD: ${REDIS_PASSWORD:-}
       JWT_SECRET: ${JWT_SECRET:?JWT_SECRET is required}

@@ -2,21 +2,22 @@ FROM node:20-alpine AS builder
 
 WORKDIR /app
 
-# Copy workspace manifests
+# Copy ALL workspace manifests — npm workspaces needs every one present to resolve the lockfile
 COPY package.json package-lock.json ./
 COPY shared/package.json ./shared/
+COPY backend/package.json ./backend/
+COPY mobile/package.json ./mobile/
 COPY dashboard/package.json ./dashboard/
 
-RUN npm ci --workspace=shared --workspace=dashboard
+RUN npm ci
 
 # Copy source
 COPY shared/ ./shared/
 COPY dashboard/ ./dashboard/
 COPY tsconfig.json ./
 
-# Build shared types then dashboard
-RUN npm run build --workspace=shared 2>/dev/null || true
-RUN npm run build --workspace=dashboard
+# Vite handles TS compilation — skip tsc --build (noEmit+composite conflict)
+RUN cd dashboard && npx vite build
 
 # --- Runtime: serve with nginx ---
 FROM nginx:alpine

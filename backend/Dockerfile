@@ -2,21 +2,20 @@ FROM node:20-alpine AS builder
 
 WORKDIR /app
 
-# Copy workspace manifests
+# Copy ALL workspace manifests — npm workspaces needs every one present to resolve the lockfile
 COPY package.json package-lock.json ./
 COPY shared/package.json ./shared/
 COPY backend/package.json ./backend/
+COPY mobile/package.json ./mobile/
+COPY dashboard/package.json ./dashboard/
 
-# Install all workspace deps
-RUN npm ci --workspace=shared --workspace=backend
+RUN npm ci
 
 # Copy source
 COPY shared/ ./shared/
 COPY backend/ ./backend/
 COPY tsconfig.json ./
 
-# Build shared then backend
-RUN npm run build --workspace=shared 2>/dev/null || true
 RUN npm run build --workspace=backend
 
 # --- Runtime ---
@@ -27,8 +26,10 @@ WORKDIR /app
 COPY package.json package-lock.json ./
 COPY shared/package.json ./shared/
 COPY backend/package.json ./backend/
+COPY mobile/package.json ./mobile/
+COPY dashboard/package.json ./dashboard/
 
-RUN npm ci --workspace=shared --workspace=backend --omit=dev
+RUN npm ci --omit=dev
 
 COPY --from=builder /app/shared/ ./shared/
 COPY --from=builder /app/backend/dist/ ./backend/dist/

@@ -1,0 +1,13 @@
+{
+  "expo": {
+    "name": "Biosur Fleet",
+    "slug": "biosur-fleet",
+    "version": "1.0.0",
+    "orientation": "portrait",
+    "scheme": "biosur",
+    "platforms": ["ios", "android", "web"],
+    "web": {
+      "bundler": "metro"
+    }
+  }
+}

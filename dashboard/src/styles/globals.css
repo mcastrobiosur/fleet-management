@@ -1,0 +1,38 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/*
+ * Design System "Elemental Purity" — Biosur Eco
+ *
+ * Tipografías: Manrope (headlines, labels) + Inter (body)
+ * Regla "No-Line": usar cambios de color de superficie en lugar de bordes
+ * Sombras ambientales: on-surface 10% opacity, blur 30-50px
+ * Esquinas redondeadas: lg (0.5rem), xl (0.75rem), full (1rem)
+ */
+
+@layer base {
+  body {
+    @apply font-body bg-surface text-on-surface antialiased;
+  }
+
+  h1, h2, h3, h4, h5, h6 {
+    @apply font-headline;
+  }
+}
+
+@layer components {
+  /* Ghost Border — outline-variant at low opacity for containment */
+  .ghost-border {
+    @apply border border-outline/5;
+  }
+
+  /* Ambient shadow for floating elements */
+  .shadow-ambient {
+    box-shadow: 0 8px 30px rgba(29, 27, 23, 0.1);
+  }
+
+  .shadow-ambient-lg {
+    box-shadow: 0 12px 50px rgba(29, 27, 23, 0.1);
+  }
+}

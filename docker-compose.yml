@@ -68,6 +68,18 @@ services:
     ports:
       - "3011:80"
 
+  mobile:
+    build:
+      context: .
+      dockerfile: mobile/Dockerfile
+      args:
+        EXPO_PUBLIC_API_BASE_URL: /api
+    restart: unless-stopped
+    depends_on:
+      - backend-biosur
+    ports:
+      - "3012:80"
+
 volumes:
   postgres_data-biosur:
   redis_data-biosur:

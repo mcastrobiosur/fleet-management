@@ -9,7 +9,7 @@ import { getToken, setTokens, clearTokens } from '../storage/auth';
 
 const API_BASE_URL = __DEV__
   ? 'http://localhost:3000/api'
-  : 'https://api.biosur.com/api';
+  : (process.env.EXPO_PUBLIC_API_BASE_URL ?? '/api');
 
 interface RequestOptions extends Omit<RequestInit, 'headers'> {
   headers?: Record<string, string>;

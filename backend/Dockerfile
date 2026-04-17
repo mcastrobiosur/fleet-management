@@ -16,6 +16,7 @@ COPY shared/ ./shared/
 COPY backend/ ./backend/
 COPY tsconfig.json ./
 
+# tsc --build resolves project references: builds shared first, then backend
 RUN npm run build --workspace=backend
 
 # --- Runtime ---
@@ -31,12 +32,15 @@ COPY dashboard/package.json ./dashboard/
 
 RUN npm ci --omit=dev
 
-COPY --from=builder /app/shared/ ./shared/
+# Use only the compiled shared dist — overwrite package.json to point to dist/
+COPY --from=builder /app/shared/dist/ ./shared/dist/
+RUN echo '{"name":"@biosur/shared","version":"1.0.0","main":"dist/index.js","types":"dist/index.d.ts"}' \
+    > ./shared/package.json
+
 COPY --from=builder /app/backend/dist/ ./backend/dist/
 
 ENV NODE_ENV=production
-ENV PORT=3000
 
-EXPOSE 3000
+EXPOSE 3010
 
 CMD ["node", "backend/dist/index.js"]
